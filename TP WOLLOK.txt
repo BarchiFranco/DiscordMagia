@@ -1,0 +1,132 @@
+//Barchiesi Franco //
+object elPaquete{
+	var pagado = true
+	var destino = matrix
+	method estaPagado(){
+		return pagado
+	}
+	method cambiarEstado(){
+		pagado = pagado.negate()
+	}
+	method puedeLlevarse(persona){
+		return (destino.dejaPasar(persona) && pagado)
+	}
+	
+}
+
+object puenteBrooklyn{
+	method dejaPasar(persona){
+		return persona.pesoTotal()<1000
+	}
+}
+
+object matrix{
+	method dejaPasar(persona){
+		return persona.puedellamar()
+	}
+}
+
+object roberto {
+	var transporte = jenny
+	
+	method pesoTotal(){
+		return 90 + transporte.pesoT()
+	}	
+	method puedellamar(){
+		return false
+	}
+	method cambiarTransporte(nuevoTransporte){
+		transporte=nuevoTransporte
+	}
+}
+
+object jenny {
+	method pesoT(){
+		return 0
+	}
+}
+
+object mack {
+	var acoplados = 0
+	method pesoT(){
+	return 500*acoplados
+	}
+	
+	method ponerAcoplados(cantidad){
+		acoplados = acoplados+cantidad
+	}
+}
+
+object chuckNorris {
+	method pesoTotal(){
+		return 900
+	}
+	
+	method puedellamar(){
+		return true
+	}
+}
+
+object neo {
+   var credito = true
+ 	
+ 	method pesoTotal(){
+ 		return 0
+ 	}
+	method puedellamar(){
+		return credito
+	}
+	method cambiarCredito(){
+		credito = credito.negate()
+	}
+}
+
+object fedax{
+	var empleados = [roberto, chuckNorris, neo]
+	
+	method despedir(unEmpleado){
+		empleados.remove(unEmpleado)
+	}	
+	
+	method contratar(unEmpleado){
+		empleados.add(unEmpleado)
+	}	
+	
+	method despedirtodos(){
+		empleados.clear()
+	}
+	
+	method esGrande(){
+		return empleados.size() > 2
+	}	
+	
+	method entregaelPrimero(lugar){
+		return elPaquete.puedeLlevarse(empleados.first())
+	}
+	
+	method pesoDelUltimo(){
+		return empleados.last().pesoTotal()
+	}
+	
+	method sePuedeLlevar(){
+		return empleados.any({empleado => elPaquete.puedeLlevarse(empleado)})
+	}
+	
+	method esFacil(){
+		return empleados.all({empleado => elPaquete.puedeLlevarse(empleado)})
+	}
+	
+	method puedenLlevar(){
+		return empleados.filter({empleado => elPaquete.puedeLlevarse(empleado)})
+	}
+
+	method sobrepeso(){
+		return empleados.sum({empleado => empleado.pesoTotal()}) / empleados.size() > 500
+	}
+	
+	method enviarPaquete(){
+		if((self.puedenLlevar()).size()>0)
+		return "el Paquete fue enviado exitosamente." 
+		else return "Error, el paquete no puede ser enviado por ningun empleado de la empresa."
+	}
+}
