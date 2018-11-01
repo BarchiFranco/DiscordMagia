@@ -1,1 +1,46 @@
 
+import example.*
+
+describe "tests del examen"{
+	const utn = new AldeaAmurallada(0,100)
+	const ventormenta = new Capital(5) 
+	const orgrimmar = new Capital(1)
+	const darnassus = new Aldea(20)
+	const manolo = new Vikingo(jarl,new Soldado(0,true))
+	const ragnar = new Vikingo(jarl,new Soldado(50,false))
+	const jose = new Vikingo(karl,new Soldado(50,true))
+	const expedicion = new Expedicion(lugaresAInvadir = [utn,ventormenta,orgrimmar], vikingos = [manolo,ragnar])
+	const expedicionSecundaria =  new Expedicion(lugaresAInvadir = [darnassus], vikingos = [manolo,ragnar])
+
+	
+	
+	test "Manolo, como tiene armas no puede ir a la expedicion" {
+		assert.equals("Dicho vikingo no puede subir a la expedicion",(expedicion.aniadirVikingo(manolo)))
+	}
+
+	test "Jose, como no tiene armas puede ir a la expedicion" {
+		expedicion.aniadirVikingo(jose)
+		assert.equals([manolo,ragnar,jose],expedicion.vikingos())
+	}
+
+	test "La utn no es un lugar que conviene invadir, necesitamos 100"{
+		assert.that(not(utn.valeLaPena(expedicion)))
+	}
+	
+	test "Como la utn no vale la pena, la expedicion en si no vale la pena"{
+		assert.that(not(expedicion.valeLaPena()))
+	}
+	
+	test "Ventonrmenta vale la pena para la expedicion secundaria"{
+		assert.that(ventormenta.valeLaPena(expedicionSecundaria))
+	}
+	
+	test "Darnassus vale la pena para la expedicion secundaria"{
+		assert.that(darnassus.valeLaPena(expedicionSecundaria))
+	}
+	
+	test "Al realizar la expedicion, le sacamos todos los crucifijos a los de Darnassus"{
+		expedicionSecundaria.realizarExpedicion()
+		assert.equals(0,darnassus.cantCrucifijos())
+	}
+}
