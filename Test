@@ -7,7 +7,7 @@ describe "tests del examen"{
 	const orgrimmar = new Capital(1)
 	const darnassus = new Aldea(20)
 	const manolo = new Vikingo(jarl,new Soldado(0,true))
-	const ragnar = new Vikingo(jarl,new Soldado(50,false))
+	const ragnar = new Vikingo(karl,new Soldado(50,false))
 	const jose = new Vikingo(karl,new Soldado(50,true))
 	const expedicion = new Expedicion(lugaresAInvadir = [utn,ventormenta,orgrimmar], vikingos = [manolo,ragnar])
 	const expedicionSecundaria =  new Expedicion(lugaresAInvadir = [darnassus], vikingos = [manolo,ragnar])
@@ -15,7 +15,7 @@ describe "tests del examen"{
 	
 	
 	test "Manolo, como tiene armas no puede ir a la expedicion" {
-		assert.equals("Dicho vikingo no puede subir a la expedicion",(expedicion.aniadirVikingo(manolo)))
+		assert.throwsExceptionLike(new VikingoException("No puede subir al vikingo"),{expedicion.aniadirVikingo(manolo)})
 	}
 
 	test "Jose, como no tiene armas puede ir a la expedicion" {
@@ -43,4 +43,10 @@ describe "tests del examen"{
 		expedicionSecundaria.realizarExpedicion()
 		assert.equals(0,darnassus.cantCrucifijos())
 	}
+	
+	test "Ragnar sube de clase"{
+		ragnar.escalarSocialmente()
+		assert.equals(thrall,ragnar.claseSocial())
+	}
+	
 }
