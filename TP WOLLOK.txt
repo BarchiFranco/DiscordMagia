@@ -130,3 +130,208 @@ object fedax{
 		else return "Error, el paquete no puede ser enviado por ningun empleado de la empresa."
 	}
 }
+
+
+//
+
+/** First Wollok example */
+class Expedicion{
+	var property vikingos = []
+	var property lugaresAInvadir = []
+	
+	method aniadirVikingo(vikingo){
+		if(vikingo.esProductivo()){
+			vikingos.add(vikingo)
+			return vikingos
+		}
+		else return "Dicho vikingo no puede subir a la expedicion"
+	}
+	
+	method valeLaPena(){
+		return lugaresAInvadir.all({lugar => lugar.valeLaPena(self)})
+	}
+	
+	method cantidadVikingos(){
+		return vikingos.size()
+	}
+	
+	method realizarExpedicion(){
+		lugaresAInvadir.forEach({lugar => lugar.serInvadidoPor(self)})
+	}
+	
+	method aniadirLugar(lugar){
+		lugaresAInvadir.add(lugar)
+	}
+}
+
+class Vikingo {
+	var property claseSocial
+	var property ocupacion
+	
+	constructor(_claseSocial,_ocupacion){
+		claseSocial = _claseSocial
+		ocupacion = _ocupacion
+	}
+	
+	method esProductivo(){
+		return ocupacion.esProductivaOcup() &&  claseSocial.esProductivaClase(self)
+	}
+	
+	method poseeArmas(){
+		return ocupacion.poseeArmas()
+	}
+	
+	method atacarCapital(){
+		ocupacion.atacarCapital()
+	}
+	
+	method escalarSocialmente(){
+		claseSocial = claseSocial.escalar()
+	}
+	
+	method recibirBonifEscalar(){
+		ocupacion.bonificacion()
+	}
+}
+
+class Casta{
+	method esProductivaClase(vikingo){
+		return true
+	}
+	
+	method escalar(vikingo)
+}
+
+object jarl inherits Casta{
+	override method esProductivaClase(vikingo){
+		return not(vikingo.poseeArmas())
+	}
+
+	override method escalar(vikingo){
+		vikingo.recibirBonifEscalar()
+		return karl
+	}
+}
+
+object karl inherits Casta{
+	
+	 override method escalar(vikingo){
+		return thrall
+	}
+}
+
+object thrall inherits Casta{
+	
+	 override method escalar(vikingo){
+		return self
+	}
+}
+
+class Granjero{
+	var property cantHijos
+	var property hectareas
+	
+	constructor(_cantHijos,_hectareas){
+		cantHijos = _cantHijos
+		hectareas = _hectareas
+	}
+	
+	method esProductivaOcup(){
+		return hectareas/cantHijos >= 2
+	}
+	
+	method poseeArmas(){
+		return false
+	}
+	
+	method atacarCapital(){}
+
+	method bonificacion(){
+		cantHijos += 2
+		hectareas += 2
+	}
+}
+
+class Soldado{
+	var property vidasCobradas
+	var poseeArmas
+	
+	constructor(_vidasCobradas,_poseeArmas){
+		vidasCobradas = _vidasCobradas
+		poseeArmas = _poseeArmas
+	}
+	
+	method esProductivaOcup(){
+		return (vidasCobradas >20) && poseeArmas
+	}
+	
+	method poseeArmas(){
+		return poseeArmas
+	}
+	
+	method atacarCapital(){
+		vidasCobradas += 1
+	}
+	
+	method bonificacion(){
+		poseeArmas = true
+	}
+}
+
+class Capital{
+	var property factorRiqueza
+	
+	constructor (_factorRiqueza){
+		factorRiqueza = _factorRiqueza
+	}
+	
+	method valeLaPena(expedicion){
+		return expedicion.cantidadVikingos() <= 3*self.botin(expedicion)
+	}
+	
+	method botin(expedicion) {
+		return expedicion.cantidadVikingos() * factorRiqueza
+	}
+	
+	method serInvadidoPor(expedicion){
+		(expedicion.vikingos()).forEach({vikingo => vikingo.atacarCapital()})
+		
+	}
+}
+
+class Aldea{
+	var property cantCrucifijos
+	
+	constructor(_cantCrucifijos){
+		cantCrucifijos = _cantCrucifijos
+	}
+	
+	method botin(expedicion){
+		return cantCrucifijos
+	}
+	
+	method valeLaPena(expedicion){
+		return self.saciaSed(expedicion)
+	}
+	
+	method saciaSed(expedicion){
+		return self.botin(expedicion) >= 15
+	}
+	
+	method serInvadidoPor(expedicion){
+		cantCrucifijos = 0
+	}
+}
+
+class AldeaAmurallada inherits Aldea{
+	var property cantMinima
+	
+	constructor (_cantCrucifijos,_cantMinima) = super(_cantCrucifijos){
+		cantMinima = _cantMinima
+	}
+	
+	override method valeLaPena(expedicion){
+		return super(expedicion) && expedicion.cantidadVikingos() >= cantMinima
+	}
+	
+}
